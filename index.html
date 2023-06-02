@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+        <link name="font-awesome" rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" />
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,400;1,600;1,700;1,900&amp;display=swap" rel="stylesheet">
+
+        <title>Recruitment Form</title>
+
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body class="scrollbar">
+        <nav>
+            <a href="https://neuronworks.co.id" class="link1">
+                <img src="img/nw-horizontal.png"  alt="PT. Neuronworks Indonesia" class="logo1">
+            </a>
+        </nav>
+        <div>
+            <img src="img/Starlid-illustration.png"  alt="PT. Neuronworks Indonesia" class="starlid" >
+            <form id="formRecuit">
+                <div>
+                    <div class="logo2">
+                        <img src="img/logomark-sign.png" alt="Neuron 3.0" class="logo2">
+                    </div>
+                </div>
+                <div class="form-description">
+                    <h3 class="form-title">Form Rekrutasi</h3>
+                    <p class="caption">Isi data di bawah sesuai dengan identitas diri anda dan lowongan yang akan anda pilih</p>
+                </div>
+                <div>
+                    <label for="fullname">Fullname<span class="redstar">*</span></label>
+                    <input type="text" class="form-control" name="fullname" id="fullname" placeholder="Masukkan nama" required="">
+                </div>
+                
+                <div>
+                    <label for="email">Email<span class="redstar">*</span></label>
+                    <input type="text" class="form-control" name="email" id="email" placeholder="Masukkan email" required="">
+                </div>
+                
+                <div>
+                    <label for="phone">Phone Number<span class="redstar">*</span></label>
+                    <input type="text" class="form-control" name="phone" id="phone" placeholder="Masukkan nomor telpon" required="">
+                </div>
+                
+                <div>
+                    <label for="vacancy">Vacancy<span class="redstar">*</span></label>
+                    <select class="form-control" name="lowongan" id="lowongan">
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="position">Position <span class="redstar">*</span></label>
+                    <select class="form-control" required="" name="posisi" id="posisi">
+                    </select>
+                </div>
+                <div>
+                    <button type="button" id="btnSubmit" class="btn btn-primary waves-effect waves-light" onclick="submitForm()">Kirim</button>
+                </div>
+                <div>
+                    <ul>
+                        <li>
+                            <a href="https://instagram.com/neuronworks">
+                                <i class="fab fa-instagram-square sosmed" aria-hidden="true"></i>
+                            </a>                        
+                        </li>
+                        <li>
+                            <a href="https://www.youtube.com/@NeuronworksIndonesia">
+                                <i class="fab fa-youtube sosmed" aria-hidden="true"></i>
+                                <span class="sr-only">Youtube</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/neuronworks">
+                                <i class="fab fa-twitter sosmed" aria-hidden="true"></i>
+                                <span class="sr-only">Twitter</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.facebook.com/neuronworks/">
+                                <i class="fab fa-facebook sosmed" aria-hidden="true"></i>
+                                <span class="sr-only">Facebook</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <a class="neuronlink" href="https://www.neuronworks.co.id">www.neuronworks.co.id</a>
+                </div>         
+            </form>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="modalSubmit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalSubmitLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalSubmitLabel"></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id="info"></h6>
+                        <div id="modalContent"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Okay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+        <script>
+            
+            const lowongan = ["- Pilih Lowongan -", "Web Programmer", "Mobile Programmer", "System Adminintrator"],
+            posisi = ["- Pilih Posisi -", "Bandung", "Jakarta"];
+
+            var selectLowongan = $('#lowongan')[0],
+            selectPosisi = $('#posisi')[0];
+
+            for (var i = 0; i<lowongan.length; i++){
+                var opt = document.createElement('option');
+                opt.value = lowongan[i];
+                opt.innerHTML = lowongan[i];
+                selectLowongan.appendChild(opt);
+            }
+
+            for (var i = 0; i<posisi.length; i++){
+                var opt = document.createElement('option');
+                opt.value = posisi[i];
+                opt.innerHTML = posisi[i];
+                selectPosisi.appendChild(opt);
+            }
+
+            $('#lowongan').on('change', function() {
+                var valueLowongan = this.value;
+                console.log(valueLowongan);
+            });
+
+            $('#posisi').on('change', function() {
+                var valuePosisi = this.value;
+                console.log(valuePosisi);
+            });
+
+            function submitForm(){
+
+                let fullname = $('#fullname').val(),
+                email = $('#email').val(),
+                phone = $('#phone').val(),
+                x = $('#lowongan').val(),
+                y = $('#posisi').val(),
+                lowongan = (x.includes("Pilih")) ? '' : x,
+                posisi = (y.includes("Pilih")) ? '' : y;
+
+                $('#modalContent').empty();
+
+                if(fullname === '' || email === '' || phone === '' || lowongan === '' || posisi === '' ){
+                        $("#modalSubmitLabel").text("Failed");
+                        $("#info").text("Mohon isi semua datanya");
+                        $("#info").css('color', '#dc3545');
+                }else{
+                        $("#modalSubmitLabel").text("Success");
+                        $("#info").text("Terimakasih telah melakukan pengisian, permintaan anda akan segera kami proses.");
+                        $("#info").css('color', '#198754');
+                }
+
+                var content = '<span class="badge text-bg-secondary">Fullname</span> <h6>'+fullname+'</h6><span class="badge text-bg-secondary">Email</span> <h6>'+email+'</h6><span class="badge text-bg-secondary">Phone</span> <h6>'+phone+'</h6><span class="badge text-bg-secondary">Lowongan</span> <h6>'+lowongan+'</h6><span class="badge text-bg-secondary">Posisi</span> <h6>'+posisi+'</h6>';
+                $('#modalContent').append(content);
+
+                $('#modalSubmit').modal('show');
+                $('#fullname').val("");
+                $('#email').val("");
+                $('#phone').val("");
+                $('#lowongan').val("- Pilih Lowongan -");
+                $('#posisi').val("- Pilih Posisi -");
+
+            }
+
+        </script>
+    </body>
+</html>
