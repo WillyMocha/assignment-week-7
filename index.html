@@ -41,29 +41,34 @@
                 </div>
                 <div>
                     <label for="fullname">Fullname<span class="redstar">*</span></label>
-                    <input type="text" class="form-control" name="fullname" id="fullname" placeholder="Masukkan nama" required="">
+                    <input type="text" class="form-control" name="fullname" id="fullname" placeholder="Masukkan nama">
+                    <h6 id="alert0" class="redstar"></h6>
                 </div>
                 
                 <div>
                     <label for="email">Email<span class="redstar">*</span></label>
-                    <input type="text" class="form-control" name="email" id="email" placeholder="Masukkan email" required="">
+                    <input type="text" class="form-control" name="email" id="email" placeholder="Masukkan email">
+                    <h6 id="alert1" class="redstar"></h6>
                 </div>
                 
                 <div>
                     <label for="phone">Phone Number<span class="redstar">*</span></label>
-                    <input type="text" class="form-control" name="phone" id="phone" placeholder="Masukkan nomor telpon" required="">
+                    <input type="text" class="form-control" name="phone" id="phone" placeholder="Masukkan nomor telpon">
+                    <h6 id="alert2" class="redstar"></h6>
                 </div>
                 
                 <div>
                     <label for="vacancy">Vacancy<span class="redstar">*</span></label>
                     <select class="form-control" name="lowongan" id="lowongan">
                     </select>
+                    <h6 id="alert3" class="redstar"></h6>
                 </div>
                 
                 <div>
                     <label for="position">Position <span class="redstar">*</span></label>
-                    <select class="form-control" required="" name="posisi" id="posisi">
+                    <select class="form-control" name="posisi" id="posisi">
                     </select>
+                    <h6 id="alert4" class="redstar"></h6>
                 </div>
                 <div class="d-grid">
                     <button class="btn btn-primary waves-effect waves-light" type="button" id="btnSubmit" onclick="submitForm()">Kirim</button>
@@ -101,7 +106,7 @@
         
         <!-- Modal -->
         <div class="modal fade" id="modalSubmit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalSubmitLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="modalSubmitLabel"></h1>
@@ -122,8 +127,30 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
         <script>
+
+            var sa = localStorage.getItem("sa"),
+            dev = localStorage.getItem("dev"),
+            tw = localStorage.getItem("tw"),
+            submiter = localStorage.getItem("submiter"),
+            arrName = new Array,
+            arrEmail = new Array,
+            arrPhone = new Array,
+            arrLowongan = new Array,
+            arrPosisi = new Array;
+
+            if(sa == "" || sa == null){
+                localStorage.setItem("sa", 1);
+            }
+
+            if(dev == "" || dev == null){
+                localStorage.setItem("dev", 2);
+            }
+
+            if(tw == "" || tw == null){
+                localStorage.setItem("tw", 3);
+            }
             
-            const lowongan = ["- Pilih Lowongan -", "Web Programmer", "Mobile Programmer", "System Adminintrator"],
+            const lowongan = ["- Pilih Lowongan -", "System Adminintrator", "Programmer", "Technical Writter"],
             posisi = ["- Pilih Posisi -", "Bandung", "Jakarta"];
 
             var selectLowongan = $('#lowongan')[0],
@@ -145,46 +172,104 @@
 
             $('#lowongan').on('change', function() {
                 var valueLowongan = this.value;
-                console.log(valueLowongan);
             });
 
             $('#posisi').on('change', function() {
                 var valuePosisi = this.value;
-                console.log(valuePosisi);
             });
+            
+            function validateForm(data) {
+                if (data == "" || data == null) {
+                    return "Tidak boleh kosong";
+                }
+            }
 
             function submitForm(){
 
-                let fullname = $('#fullname').val(),
+                var fullname = $('#fullname').val(),
                 email = $('#email').val(),
                 phone = $('#phone').val(),
                 x = $('#lowongan').val(),
                 y = $('#posisi').val(),
                 lowongan = (x.includes("Pilih")) ? '' : x,
-                posisi = (y.includes("Pilih")) ? '' : y;
+                posisi = (y.includes("Pilih")) ? '' : y,
+                getEmail = JSON.parse(localStorage["email"]),
+                getPhone = JSON.parse(localStorage["phone"]);
+                console.log(getEmail);
 
-                $('#modalContent').empty();
+                const data = [fullname, email, phone, lowongan, posisi];
+                // console.log(data);
 
-                if(fullname === '' || email === '' || phone === '' || lowongan === '' || posisi === '' ){
-                        $("#modalSubmitLabel").text("Failed");
-                        $("#info").text("Mohon isi semua datanya");
-                        $("#info").css('color', '#dc3545');
-                }else{
-                        $("#modalSubmitLabel").text("Success");
-                        $("#info").text("Terimakasih telah melakukan pengisian, permintaan anda akan segera kami proses.");
-                        $("#info").css('color', '#198754');
+                //Validasi inputan
+                for(var i=0; i<data.length; i++){
+                    $('#alert'+i).empty();
+                    var validate = validateForm(data[i]);
+                    $('#alert'+i).append(validate);
                 }
 
-                var content = '<span class="badge text-bg-secondary">Fullname</span> <h6>'+fullname+'</h6><span class="badge text-bg-secondary">Email</span> <h6>'+email+'</h6><span class="badge text-bg-secondary">Phone</span> <h6>'+phone+'</h6><span class="badge text-bg-secondary">Lowongan</span> <h6>'+lowongan+'</h6><span class="badge text-bg-secondary">Posisi</span> <h6>'+posisi+'</h6>';
-                $('#modalContent').append(content);
+                //Validasi email
+                if (getEmail != null) {
 
-                $('#modalSubmit').modal('show');
-                $('#fullname').val("");
-                $('#email').val("");
-                $('#phone').val("");
-                $('#lowongan').val("- Pilih Lowongan -");
-                $('#posisi').val("- Pilih Posisi -");
+                    for(var i=0; i<getEmail.length; i++){
+                        console.log(getEmail[i]);
+                        
+                        // if(getEmail[i] === email){
+                        //     $('#alert1').empty();
+                        //     $('#alert1').append('Email sudah pernah disubmit');
+                        // }
+                    }
+                }
 
+                //Validasi no.hp
+
+                setLocal(data);
+
+                // $('#modalContent').empty();
+
+                // if(fullname === '' || email === '' || phone === '' || lowongan === '' || posisi === '' ){
+                //         $("#modalSubmitLabel").text("Failed");
+                //         $("#info").text("Mohon isi semua datanya");
+                //         $("#info").css('color', '#dc3545');
+                // }else{
+                //         $("#modalSubmitLabel").text("Success");
+                //         $("#info").text("Terimakasih telah melakukan pengisian, permintaan anda akan segera kami proses.");
+                //         $("#info").css('color', '#198754');
+                // }
+
+                // var content = '<span class="badge text-bg-secondary">Fullname</span> <h6>'+fullname+'</h6><span class="badge text-bg-secondary">Email</span> <h6>'+email+'</h6><span class="badge text-bg-secondary">Phone</span> <h6>'+phone+'</h6><span class="badge text-bg-secondary">Lowongan</span> <h6>'+lowongan+'</h6><span class="badge text-bg-secondary">Posisi</span> <h6>'+posisi+'</h6>';
+                // $('#modalContent').append(content);
+
+                // $('#modalSubmit').modal('show');
+                // $('#fullname').val("");
+                // $('#email').val("");
+                // $('#phone').val("");
+                // $('#lowongan').val("- Pilih Lowongan -");
+                // $('#posisi').val("- Pilih Posisi -");
+
+            }
+
+            function setLocal(data) {
+
+                arrName.push(data[0]);
+                arrEmail.push(data[1]);
+                arrPhone.push(data[2]);
+                arrLowongan.push(data[3]);
+                arrPosisi.push(data[4]);
+
+                localStorage["fullname"] = JSON.stringify(arrName);
+                localStorage["email"] = JSON.stringify(arrEmail);
+                localStorage["phone"] = JSON.stringify(arrPhone);
+                localStorage["lowongan"] = JSON.stringify(arrLowongan);
+                localStorage["posisi"] = JSON.stringify(arrPosisi);
+
+            }
+
+            function show() {
+
+                var stored_datas = JSON.parse(localStorage["fav"]);
+
+                document.getElementById("hello").innerHTML = stored_datas;
+                
             }
 
         </script>
