@@ -42,7 +42,7 @@
                 <div>
                     <label for="fullname">Fullname<span class="redstar">*</span></label>
                     <input type="text" class="form-control" name="fullname" id="fullname" placeholder="Masukkan nama">
-                    <h6 id="alert0" class="redstar"></h6>
+                    <h6 id="alert0"></h6>
                 </div>
                 
                 <div>
@@ -53,22 +53,22 @@
                 
                 <div>
                     <label for="phone">Phone Number<span class="redstar">*</span></label>
-                    <input type="text" class="form-control" name="phone" id="phone" placeholder="Masukkan nomor telpon">
-                    <h6 id="alert2" class="redstar"></h6>
+                    <input type="number" class="form-control" name="phone" id="phone" placeholder="Masukkan nomor telpon">
+                    <h6 id="alert2"></h6>
                 </div>
                 
                 <div>
                     <label for="vacancy">Vacancy<span class="redstar">*</span></label>
                     <select class="form-control" name="lowongan" id="lowongan">
                     </select>
-                    <h6 id="alert3" class="redstar"></h6>
+                    <h6 id="alert3"></h6>
                 </div>
                 
                 <div>
                     <label for="position">Position <span class="redstar">*</span></label>
                     <select class="form-control" name="posisi" id="posisi">
                     </select>
-                    <h6 id="alert4" class="redstar"></h6>
+                    <h6 id="alert4"></h6>
                 </div>
                 <div class="d-grid">
                     <button class="btn btn-primary waves-effect waves-light" type="button" id="btnSubmit" onclick="submitForm()">Kirim</button>
@@ -115,9 +115,10 @@
                     <div class="modal-body">
                         <h6 id="info"></h6>
                         <div id="modalContent"></div>
+                        <span id="total"></span>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Okay</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick="window.location.reload();">Okay</button>
                     </div>
                 </div>
             </div>
@@ -128,33 +129,61 @@
 
         <script>
 
-            var sa = localStorage.getItem("sa"),
-            dev = localStorage.getItem("dev"),
-            tw = localStorage.getItem("tw"),
-            submiter = localStorage.getItem("submiter"),
-            arrName = new Array,
-            arrEmail = new Array,
-            arrPhone = new Array,
-            arrLowongan = new Array,
-            arrPosisi = new Array;
-
-            if(sa == "" || sa == null){
+            if(localStorage.getItem("sa") == "" || localStorage.getItem("sa") == null){
                 localStorage.setItem("sa", 1);
             }
 
-            if(dev == "" || dev == null){
+            if(localStorage.getItem("dev") == "" || localStorage.getItem("dev") == null){
                 localStorage.setItem("dev", 2);
             }
 
-            if(tw == "" || tw == null){
+            if(localStorage.getItem("tw") == "" || localStorage.getItem("tw") == null){
                 localStorage.setItem("tw", 3);
             }
+
+            if(localStorage.getItem("submiter") == "" || localStorage.getItem("submiter") == null){
+                localStorage.setItem("submiter", 0);
+            }
+
+            if(localStorage.getItem("fullname") == "" || localStorage.getItem("fullname") == null){
+                var arrName = new Array;
+            }else{
+                var arrName = JSON.parse(localStorage["fullname"]);
+            }
+
+            if(localStorage.getItem("email") == "" || localStorage.getItem("email") == null){
+                var arrEmail = new Array;
+            }else{
+                var arrEmail = JSON.parse(localStorage["email"]);
+            }
+
+            if(localStorage.getItem("phone") == "" || localStorage.getItem("phone") == null){
+                var arrPhone = new Array;
+            }else{
+                var arrPhone = JSON.parse(localStorage["phone"]);
+            }
+
+            if(localStorage.getItem("lowongan") == "" || localStorage.getItem("lowongan") == null){
+                var arrLowongan = new Array;
+            }else{
+                var arrLowongan = JSON.parse(localStorage["lowongan"]);
+            }
+
+            if(localStorage.getItem("posisi") == "" || localStorage.getItem("posisi") == null){
+                var arrPosisi = new Array;
+            }else{
+                var arrPosisi = JSON.parse(localStorage["posisi"]);
+            }
+
+            var sa = parseInt(localStorage.getItem("sa")),
+            dev = parseInt(localStorage.getItem("dev")),
+            tw = parseInt(localStorage.getItem("tw")),
+            submiter = parseInt(localStorage.getItem("submiter")),
+            selectLowongan = $('#lowongan')[0],
+            selectPosisi = $('#posisi')[0];
             
             const lowongan = ["- Pilih Lowongan -", "System Adminintrator", "Programmer", "Technical Writter"],
             posisi = ["- Pilih Posisi -", "Bandung", "Jakarta"];
-
-            var selectLowongan = $('#lowongan')[0],
-            selectPosisi = $('#posisi')[0];
 
             for (var i = 0; i<lowongan.length; i++){
                 var opt = document.createElement('option');
@@ -171,18 +200,17 @@
             }
 
             $('#lowongan').on('change', function() {
+
                 var valueLowongan = this.value;
+                
+                //Validasi lowongan
+                validateLowongan(valueLowongan);
+
             });
 
             $('#posisi').on('change', function() {
                 var valuePosisi = this.value;
             });
-            
-            function validateForm(data) {
-                if (data == "" || data == null) {
-                    return "Tidak boleh kosong";
-                }
-            }
 
             function submitForm(){
 
@@ -193,59 +221,183 @@
                 y = $('#posisi').val(),
                 lowongan = (x.includes("Pilih")) ? '' : x,
                 posisi = (y.includes("Pilih")) ? '' : y,
-                getEmail = JSON.parse(localStorage["email"]),
-                getPhone = JSON.parse(localStorage["phone"]);
-                console.log(getEmail);
+                getEmail = localStorage.getItem("email"),
+                getPhone = localStorage.getItem("phone"),
+                countLowongan = 0;
 
                 const data = [fullname, email, phone, lowongan, posisi];
-                // console.log(data);
 
                 //Validasi inputan
                 for(var i=0; i<data.length; i++){
                     $('#alert'+i).empty();
-                    var validate = validateForm(data[i]);
-                    $('#alert'+i).append(validate);
-                }
+                    var validateInput = validateForm(data[i]);
 
-                //Validasi email
-                if (getEmail != null) {
-
-                    for(var i=0; i<getEmail.length; i++){
-                        console.log(getEmail[i]);
-                        
-                        // if(getEmail[i] === email){
-                        //     $('#alert1').empty();
-                        //     $('#alert1').append('Email sudah pernah disubmit');
-                        // }
+                    if (validateInput != 0){
+                        $('#alert3').removeClass("yellow-alert green-alert");
+                        $('#alert'+i).append(validateInput);
+                        $('#alert'+i).addClass("redstar");
                     }
                 }
 
-                //Validasi no.hp
+                if(validateInput == 0){
 
-                setLocal(data);
+                    //Validasi email
+                    var valEmail = validateEmail(getEmail, email);
 
-                // $('#modalContent').empty();
+                    //Validasi no.hp
+                    var valPhone = validatePhone(getPhone, phone);
 
-                // if(fullname === '' || email === '' || phone === '' || lowongan === '' || posisi === '' ){
-                //         $("#modalSubmitLabel").text("Failed");
-                //         $("#info").text("Mohon isi semua datanya");
-                //         $("#info").css('color', '#dc3545');
-                // }else{
-                //         $("#modalSubmitLabel").text("Success");
-                //         $("#info").text("Terimakasih telah melakukan pengisian, permintaan anda akan segera kami proses.");
-                //         $("#info").css('color', '#198754');
-                // }
+                    if(valEmail == 0 && valPhone == 0){
+                        switch(lowongan) {
+                            case "System Adminintrator":
+                                countLowongan = sa-1;
+                                localStorage.setItem("sa", countLowongan);
+                                break;
+                            case "Programmer":
+                                countLowongan = dev-1;
+                                localStorage.setItem("dev", countLowongan);
+                                break;
+                            default:
+                                countLowongan = tw-1;
+                                localStorage.setItem("tw", countLowongan);
+                        }
 
-                // var content = '<span class="badge text-bg-secondary">Fullname</span> <h6>'+fullname+'</h6><span class="badge text-bg-secondary">Email</span> <h6>'+email+'</h6><span class="badge text-bg-secondary">Phone</span> <h6>'+phone+'</h6><span class="badge text-bg-secondary">Lowongan</span> <h6>'+lowongan+'</h6><span class="badge text-bg-secondary">Posisi</span> <h6>'+posisi+'</h6>';
-                // $('#modalContent').append(content);
+                        setLocal(data);
+                        var total = localStorage.getItem("submiter");
 
-                // $('#modalSubmit').modal('show');
-                // $('#fullname').val("");
-                // $('#email').val("");
-                // $('#phone').val("");
-                // $('#lowongan').val("- Pilih Lowongan -");
-                // $('#posisi').val("- Pilih Posisi -");
+                        $('#modalContent').empty();
+                        $("#modalSubmitLabel").text("Success");
+                        $("#info").text("Terimakasih telah melakukan pengisian, permintaan anda akan segera kami proses.");
+                        $("#info").css('color', '#198754');
+                        $("#total").text("Jumlah Pendaftar "+total+" orang.");
 
+                        var content = '<span class="badge text-bg-secondary">Fullname</span> <h6>'+fullname+'</h6><span class="badge text-bg-secondary">Email</span> <h6>'+email+'</h6><span class="badge text-bg-secondary">Phone</span> <h6>'+phone+'</h6><span class="badge text-bg-secondary">Lowongan</span> <h6>'+lowongan+'</h6><span class="badge text-bg-secondary">Posisi</span> <h6>'+posisi+'</h6>';
+                        $('#modalContent').append(content);
+
+                        $('#modalSubmit').modal('show');
+                    }
+                }
+
+            }
+
+            function validateLowongan(data){
+                
+                switch(data) {
+                    case "System Adminintrator":
+                        if(sa == 0){
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("yellow-alert green-alert");
+                            $('#alert3').append("Mohon maaf, rekrutasi untuk " +data+ " sudah penuh, dan tidak dapat dipilih.");
+                            $('#alert3').addClass("redstar");
+                        }else if(sa <= 2){
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("redstar green-alert");
+                            $('#alert3').append("Kuota tersisa untuk " +data+ " hanya 2 pendaftar.");
+                            $('#alert3').addClass("yellow-alert");
+                        }else{
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("redstar yellow-alert");
+                            $('#alert3').append("Anda dapat memilih lowongan " +data+ ".");
+                            $('#alert3').addClass("green-alert");
+                        }
+                        break;
+                    case "Programmer":
+                        if(dev == 0){
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("yellow-alert green-alert");
+                            $('#alert3').append("Mohon maaf, rekrutasi untuk " +data+ " sudah penuh, dan tidak dapat dipilih.");
+                            $('#alert3').addClass("redstar");
+                        }else if(dev <= 2){
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("redstar green-alert");
+                            $('#alert3').append("Kuota tersisa untuk " +data+ " hanya 2 pendaftar.");
+                            $('#alert3').addClass("yellow-alert");
+                        }else{
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("redstar yellow-alert");
+                            $('#alert3').append("Anda dapat memilih lowongan " +data+ ".");
+                            $('#alert3').addClass("green-alert");
+                        }
+                        break;
+                    case "Technical Writter":
+                        if(tw == 0){
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("yellow-alert green-alert");
+                            $('#alert3').append("Mohon maaf, rekrutasi untuk " +data+ " sudah penuh, dan tidak dapat dipilih.");
+                            $('#alert3').addClass("redstar");
+                        }else if(tw <= 2){
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("redstar green-alert");
+                            $('#alert3').append("Kuota tersisa untuk " +data+ " hanya 2 pendaftar.");
+                            $('#alert3').addClass("yellow-alert");
+                        }else{
+                            $('#alert3').empty();
+                            $('#alert3').removeClass("redstar yellow-alert");
+                            $('#alert3').append("Anda dapat memilih lowongan " +data+ ".");
+                            $('#alert3').addClass("green-alert");
+                        }
+                        break;
+                    default:
+                        $('#alert3').empty();
+                        $('#alert3').removeClass("yellow-alert green-alert");
+                        $('#alert3').append("Tidak boleh kosong");
+                        $('#alert3').addClass("redstar");
+                        break;
+                }
+            }
+            
+            function validateForm(data) {
+                if (data == "" || data == null) {
+                    return "Tidak boleh kosong";
+                }else{
+                    return 0;
+                }
+            }
+
+            function validateEmail(data, key) {
+                if(data != null){
+
+                    var valEmail = JSON.parse(localStorage["email"]);
+
+                    for(var i=0; i<valEmail.length; i++){
+                        
+                        if(valEmail[i] === key){
+                            $('#alert1').empty();
+                            $('#alert1').append('Email sudah pernah disubmit');
+
+                            return 1;
+                        }else{
+                            $('#alert1').empty();
+
+                            return 0;
+                        }
+                    }
+                }else{
+                    return 0;
+                }
+            }
+
+            function validatePhone(data, key) {
+                if(data != null){
+                    
+                    var valPhone = JSON.parse(localStorage["phone"]);
+
+                    for(var i=0; i<valPhone.length; i++){
+                        
+                        if(valPhone[i] === key){
+                            $('#alert2').empty();
+                            $('#alert2').append('No. HP sudah pernah disubmit');
+
+                            return 1;
+                        }else{
+                            $('#alert2').empty();
+
+                            return 0;
+                        }
+                    }
+                }else{
+                    return 0;
+                }
             }
 
             function setLocal(data) {
@@ -261,15 +413,8 @@
                 localStorage["phone"] = JSON.stringify(arrPhone);
                 localStorage["lowongan"] = JSON.stringify(arrLowongan);
                 localStorage["posisi"] = JSON.stringify(arrPosisi);
+                localStorage.setItem("submiter", ++submiter);
 
-            }
-
-            function show() {
-
-                var stored_datas = JSON.parse(localStorage["fav"]);
-
-                document.getElementById("hello").innerHTML = stored_datas;
-                
             }
 
         </script>

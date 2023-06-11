@@ -104,10 +104,17 @@ label {
     color: red;
 }
 
+.yellow-alert {
+    color: #ffc107;
+}
+
+.green-alert {
+    color: #198754;
+}
+
 .form-control {
     padding: 10px;
     border-radius: 5px;
-    width: 95%;
     margin-bottom: 20px;
     font-size: 12px;
     border: 1px solid #cfd8dc;
@@ -158,4 +165,16 @@ li{
 a:hover i
 {
     color: #007bff;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
